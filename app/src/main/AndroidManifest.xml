@@ -21,7 +21,8 @@
         <activity android:name=".LogInActivity" />
         <activity android:name=".Message" />
         <activity android:name=".EditClass" />
-        <activity android:name=".EditMenuActivity"></activity>
+        <activity android:name=".EditMenuActivity" />
+        <activity android:name=".AddSiteActivity"></activity>
     </application>
 
 </manifest>

@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +45,7 @@ public class SiteFragment extends Fragment {
     public boolean disability;
     public boolean pets;
     public ListView siteListView;
+    private ImageButton addSiteBtn;
 
     public static SiteFragment newInstance() {
         SiteFragment tabFrag = new SiteFragment();
@@ -83,6 +86,15 @@ public class SiteFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), SitePageActivity.class);
                 intent.putExtra("SITEID", siteID);
+                startActivity(intent);
+            }
+        });
+
+        addSiteBtn = view.findViewById(R.id.addSiteBtn);
+
+        addSiteBtn.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AddSiteActivity.class);
                 startActivity(intent);
             }
         });
