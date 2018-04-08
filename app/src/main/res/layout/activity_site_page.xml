@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.199" />
 
-
     <EditText
         android:id="@+id/incrementNumField"
         android:layout_width="108dp"
@@ -33,6 +31,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:visibility="invisible"
         android:inputType="number"
         android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -45,6 +44,7 @@
     <ImageButton
         android:id="@+id/minusBtn"
         android:layout_width="32dp"
+        android:visibility="invisible"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
@@ -58,6 +58,7 @@
         android:id="@+id/plusBtn"
         android:layout_width="32dp"
         android:layout_height="29dp"
+        android:visibility="invisible"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="30dp"
         android:layout_marginLeft="50dp"
