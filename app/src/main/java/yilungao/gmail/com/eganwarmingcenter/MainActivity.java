@@ -134,8 +134,13 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
             }
         };
 
-        if (mFirebaseUser==null) {
+        if (getIntent()!= null) {
             userPermissons = getIntent().getIntExtra("permissions", 7);
+            if(userPermissons == 7){
+                mFirebaseAuth.signOut();
+                loadLogInView();
+            }
+
         }
         else{
             mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -246,11 +251,6 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
             }
             else {
                 mDatabase.child("users").child(user.getUid()).child("role").setValue(userPermissons);
-            }
-
-            if(userPermissons == 7){
-                mFirebaseAuth.signOut();
-                loadLogInView();
             }
 
 
