@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -70,6 +71,17 @@ public class SiteAdapter extends BaseAdapter {
         ((TextView) newView.findViewById(R.id.fraction)).setText(getItem(position).numPeople + "/" + getItem(position).capacity);
 //   End;
         ((TextView) newView.findViewById(R.id.siteName)).setText(getItem(position).siteName);
+
+
+
+        if(getItem(position).activated){
+            ((ImageView) newView.findViewById(R.id.redSquare)).setVisibility(View.INVISIBLE);
+            ((ImageView) newView.findViewById(R.id.greenSquare)).setVisibility(View.VISIBLE);
+        }
+        else{
+            ((ImageView) newView.findViewById(R.id.redSquare)).setVisibility(View.VISIBLE);
+            ((ImageView) newView.findViewById(R.id.greenSquare)).setVisibility(View.INVISIBLE);
+        }
 
         return newView;
     }
