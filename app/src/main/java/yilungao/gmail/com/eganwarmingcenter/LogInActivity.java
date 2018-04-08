@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class LogInActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -26,6 +29,7 @@ public class LogInActivity extends AppCompatActivity implements AdapterView.OnIt
     protected Button logInButton;
     protected TextView signUpTextView;
     private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabase;
 
     private int userPermissions;
 
@@ -54,6 +58,7 @@ public class LogInActivity extends AppCompatActivity implements AdapterView.OnIt
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         signUpTextView = (TextView) findViewById(R.id.signUpText);
         emailEditText = (EditText) findViewById(R.id.emailField);
@@ -85,6 +90,7 @@ public class LogInActivity extends AppCompatActivity implements AdapterView.OnIt
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
+
                     mFirebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override

@@ -8,9 +8,10 @@ public class Person implements Parcelable {
     public String email, name, role;
 
 
-    public Person(String e, String n) {
+    public Person(String e, String n, String r) {
         email = e;
         name = n;
+        role = r;
     }
 
 
