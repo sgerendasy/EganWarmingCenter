@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.199" />
 
-
     <EditText
         android:id="@+id/incrementNumField"
         android:layout_width="108dp"
@@ -35,9 +33,10 @@
         android:ems="10"
         android:inputType="number"
         android:textSize="60sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/graph"
-        app:layout_constraintHorizontal_bias="0.412"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.343" />
@@ -46,28 +45,34 @@
         android:id="@+id/minusBtn"
         android:layout_width="32dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:background="#00000000"
-        app:layout_constraintEnd_toEndOf="@+id/incrementNumField"
-        app:layout_constraintTop_toBottomOf="@+id/incrementNumField"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/Adult"
+        app:layout_constraintEnd_toEndOf="@+id/plusBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.88"
         app:srcCompat="@drawable/minus_icon" />
 
     <ImageButton
         android:id="@+id/plusBtn"
         android:layout_width="32dp"
         android:layout_height="29dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="50dp"
+        android:layout_marginTop="8dp"
         android:background="#00000000"
-        app:layout_constraintBottom_toTopOf="@+id/incrementNumField"
-        app:layout_constraintEnd_toStartOf="@+id/graph"
-        app:layout_constraintHorizontal_bias="0.41"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.16000003"
         app:srcCompat="@drawable/plus_icon" />
 
     <TextView
@@ -151,5 +156,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.01999998" />
+
+    <Button
+        android:id="@+id/setButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Set"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.167"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/incrementNumField"
+        app:layout_constraintVertical_bias="0.04000002" />
 
 </android.support.constraint.ConstraintLayout>

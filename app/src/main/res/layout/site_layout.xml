@@ -18,10 +18,9 @@
 
     <ImageButton
         android:id="@+id/addSiteBtn"
-        android:layout_width="60dp"
-        android:layout_height="49dp"
+        android:layout_width="93dp"
+        android:layout_height="80dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:background="#00000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
     ArrayList<Person> mainPeopleList;
     public ArrayAdapter<Person> mainPersonAdapter;
 
+    public ArrayAdapter<Person> adminPersonAdapter;
+    ArrayList<Person> adminPeopleList;
+
+
     public final int ADMIN = 0;
     public final int CAHOOTS = 1;
     public final int DRIVER = 2;
@@ -63,10 +68,18 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainPeopleList = new ArrayList<>();
+        adminPeopleList = new ArrayList<>();
+
+        // Initialize Firebase Auth and Database Reference
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mainPeopleList.add(new Person("what@gmail.com", "Rob", ""));
         mainPeopleList.add(new Person("what@yahoo.com", "Bob", ""));
         mainPeopleList.add(new Person("what@hotmail.com", "Cob", ""));
+
+        adminPeopleList.add(new Person("admin@hotmail.com", "Cob", ""));
 
 
         mainPersonAdapter = new ArrayAdapter<Person>(this, R.layout.messaging_layout, mainPeopleList) {
@@ -81,14 +94,62 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
                 return convertView;
             }
         };
-        userPermissons = getIntent().getIntExtra("permissions", 0);
-        Log.i("MAIN", "permissions: " + userPermissons);
 
+        adminPersonAdapter = new ArrayAdapter<Person>(this, R.layout.admin_layout, adminPeopleList) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if(convertView == null) {
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.admin_layout, parent, false);
+                }
 
-        // Initialize Firebase Auth and Database Reference
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+                ((TextView)convertView.findViewById(R.id.adminEmail)).setText(getItem(position).email);
+                String role = "";
+                switch(getItem(position).role){
+                    case("0"):
+                        role = "Admin";
+                        break;
+                    case("1"):
+                        role = "Cahoots";
+                        break;
+                    case("2"):
+                        role = "Driver";
+                        break;
+                    case("3"):
+                        role = "Driver Coordinator";
+                        break;
+                    case("4"):
+                        role = "Kitchen Lead";
+                        break;
+                    case("5"):
+                        role = "Logistics";
+                        break;
+                    case("6"):
+                        role = "S Lead";
+                        break;
+                    default:
+                        break;
+                }
+                ((TextView)convertView.findViewById(R.id.adminName)).setText(getItem(position).name + ": " + role);
+                return convertView;
+            }
+        };
+
+        if (mFirebaseUser==null) {
+            userPermissons = getIntent().getIntExtra("permissions", 7);
+        }
+        else{
+            mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    userPermissons = dataSnapshot.child(mFirebaseUser.getUid()).child("role").getValue(Integer.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
 
 
@@ -101,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
 
         messagingFragment = Messaging.newInstance(mainPeopleList, this);
         siteFragment = SiteFragment.newInstance();
-        adminViewFragment = AdminViewFragment.newInstance();
+        adminViewFragment = AdminViewFragment.newInstance(adminPeopleList, this);
         switch (userPermissons){
             case(ADMIN):
                 viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -172,13 +233,26 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
             loadLogInView();
         } else {
             mUserId = mFirebaseUser.getUid();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
             // add user to database
-            Map<String, Object> userUpdate = new HashMap<>();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            userUpdate.put("email", user.getEmail());
-            userUpdate.put("role", userPermissons);
-            mDatabase.child("users").child(user.getUid()).setValue(userUpdate);
+            String name = getIntent().getStringExtra("NAME");
+            if (name != null) {
+                Map<String, Object> userUpdate = new HashMap<>();
+                userUpdate.put("email", user.getEmail());
+                userUpdate.put("role", userPermissons);
+                userUpdate.put("name", name);
+                mDatabase.child("users").child(user.getUid()).setValue(userUpdate);
+            }
+            else {
+                mDatabase.child("users").child(user.getUid()).child("role").setValue(userPermissons);
+            }
+
+            if(userPermissons == 7){
+                mFirebaseAuth.signOut();
+                loadLogInView();
+            }
+
 
             final ArrayAdapter<String> adapterString = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
 
