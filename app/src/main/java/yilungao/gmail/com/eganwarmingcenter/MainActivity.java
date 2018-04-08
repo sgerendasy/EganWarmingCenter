@@ -27,7 +27,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements SiteFragment.OnFragmentInteractionListener {
 
@@ -62,9 +64,9 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
         setContentView(R.layout.activity_main);
         mainPeopleList = new ArrayList<>();
 
-        mainPeopleList.add(new Person("what@gmail.com", "Rob"));
-        mainPeopleList.add(new Person("what@yahoo.com", "Bob"));
-        mainPeopleList.add(new Person("what@hotmail.com", "Cob"));
+        mainPeopleList.add(new Person("what@gmail.com", "Rob", ""));
+        mainPeopleList.add(new Person("what@yahoo.com", "Bob", ""));
+        mainPeopleList.add(new Person("what@hotmail.com", "Cob", ""));
 
 
         mainPersonAdapter = new ArrayAdapter<Person>(this, R.layout.messaging_layout, mainPeopleList) {
@@ -87,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -168,6 +172,13 @@ public class MainActivity extends AppCompatActivity implements SiteFragment.OnFr
             loadLogInView();
         } else {
             mUserId = mFirebaseUser.getUid();
+
+            // add user to database
+            Map<String, Object> userUpdate = new HashMap<>();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            userUpdate.put("email", user.getEmail());
+            userUpdate.put("role", userPermissons);
+            mDatabase.child("users").child(user.getUid()).setValue(userUpdate);
 
             final ArrayAdapter<String> adapterString = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
 
