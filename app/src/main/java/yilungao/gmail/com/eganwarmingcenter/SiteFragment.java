@@ -97,6 +97,7 @@ public class SiteFragment extends Fragment {
                     updatedSite.siteName = (String) siteDataSnapshot.child("name").getValue();
                     updatedSite.capacity = siteDataSnapshot.child("capacity").getValue(Integer.class);
                     updatedSite.numPeople = siteDataSnapshot.child("num_people").getValue(Integer.class);
+                    updatedSite.activated = (boolean) siteDataSnapshot.child("active").getValue();
                     siteArray.add(updatedSite);
                 }
                 mAdapter.updateData(siteArray);

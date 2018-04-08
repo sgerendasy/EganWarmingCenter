@@ -7,12 +7,14 @@ public class Site implements Parcelable{
 
     public String siteName;
     public int numPeople;
-    public int capacity;
+    public int capacity = 0;
     public boolean activated;
-    public boolean children;
-    public boolean adult;
-    public boolean disability;
-    public boolean pets;
+    public boolean children = false;
+    public boolean adult = true;
+    public boolean disability = false;
+    public boolean pets = false;
+    public int isEnabled;
+
     public int expectedWalkin;
     public String siteID;
 
@@ -24,6 +26,7 @@ public class Site implements Parcelable{
         siteName = in.readString();
         numPeople = in.readInt();
         capacity = in.readInt();
+        isEnabled = in.readInt();
     }
     public static final Creator<Site> CREATOR = new Creator<Site>() {
         @Override
@@ -47,5 +50,6 @@ public class Site implements Parcelable{
         parcel.writeString(siteName);
         parcel.writeInt(numPeople);
         parcel.writeInt(capacity);
+        parcel.writeInt(isEnabled);
     }
 }

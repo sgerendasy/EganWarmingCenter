@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import org.w3c.dom.Text;
 
 public class SitePageActivity extends AppCompatActivity {
 
@@ -47,18 +50,26 @@ public class SitePageActivity extends AppCompatActivity {
     private TextView AdultTag;
     private TextView DisabilityTag;
     private TextView PetsTag;
+    private TextView capacityHead;
 
+    String siteID;
+    MenuItem edit;
+    MenuItem delete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_page);
 
-        final String siteID = getIntent().getStringExtra("SITEID");
 
+        siteID = getIntent().getStringExtra("SITEID");
         site = new Site(siteID);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        capacityHead = findViewById(R.id.capacityHeader);
+        if(site.numPeople > site.capacity) capacityHead.setText("Over Capacity: " + site.numPeople + "/" + site.capacity);
+        else capacityHead.setText("Capacity: " + site.numPeople + "/" + site.capacity);
+
 
         mDatabase.child("sites").child(siteID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -66,6 +77,8 @@ public class SitePageActivity extends AppCompatActivity {
                 Log.d("DEBUG", "Success");
 
                 site.activated = (boolean) dataSnapshot.child("active").getValue();
+                if(site.activated)site.isEnabled = 1;
+                else site.isEnabled = 0;
                 site.adult = (boolean) dataSnapshot.child("adult").getValue();
                 site.capacity = dataSnapshot.child("capacity").getValue(Integer.class);
                 site.children = (boolean) dataSnapshot.child("children").getValue();
@@ -95,7 +108,8 @@ public class SitePageActivity extends AppCompatActivity {
                 graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
                 graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-                setTitle(site.siteName + ": " + site.capacity);
+                setTitle(site.siteName);
+                capacityHead.setText("Capacity: " + site.numPeople + "/" + site.capacity);
 
                 // set tag colors
                 if (site.children) {
@@ -143,7 +157,6 @@ public class SitePageActivity extends AppCompatActivity {
         PetsTag = findViewById(R.id.Pets);
 
 
-
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,13 +171,11 @@ public class SitePageActivity extends AppCompatActivity {
                 }
 
                 if (site.numPeople + increment > site.capacity) {
-                    Toast.makeText(getApplicationContext(), "Invalid Increment.",
+                    Toast.makeText(getApplicationContext(), "Over Capacity.",
                             Toast.LENGTH_SHORT).show();
-                } else {
-                    mDatabase.child("sites").child(siteID).child("num_people").setValue(site.numPeople + increment);
-                    incrementField.setText("");
                 }
-
+                mDatabase.child("sites").child(siteID).child("num_people").setValue(site.numPeople + increment);
+                incrementField.setText("");
             }
         });
 
@@ -189,15 +200,16 @@ public class SitePageActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.site_page_menu, menu);
+        edit = menu.findItem(R.id.action_edit);
+        delete = menu.findItem(R.id.action_delete);
+        edit.setVisible(true);
+        delete.setVisible(true);
         return true;
     }
 
@@ -210,10 +222,41 @@ public class SitePageActivity extends AppCompatActivity {
                 loadLogInView();
 
             case R.id.action_edit:
-                
+                Intent intent = new Intent(this, EditClass.class);
+                intent.putExtra("siteName", site.siteName);
+                intent.putExtra("siteCapacity", site.capacity+"");
+                intent.putExtra("siteChildren", site.children);
+                intent.putExtra("siteAdult", site.adult);
+                intent.putExtra("siteDisability", site.disability);
+                intent.putExtra("sitePets", site.pets);
+                intent.putExtra("enabled", site.activated);
+
+                startActivityForResult(intent, 9001);
+
+            case R.id.action_delete:
+
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int baseRequestCode = requestCode & 0xffff; //apparently when you startactivityforresult from a fragment it puts random stuff in higher bits.
+        if(baseRequestCode == 9001 && data != null) {
+            int capacity = data.getIntExtra("capacity", 0);
+            boolean children = data.getBooleanExtra("children", false);
+            boolean adult = data.getBooleanExtra("adult", true);
+            boolean disability = data.getBooleanExtra("disability", true);
+            boolean pets = data.getBooleanExtra("pets", true);
+            boolean enabled = data.getBooleanExtra("enabled", true);
+            mDatabase.child("sites").child(siteID).child("capacity").setValue(capacity);
+            mDatabase.child("sites").child(siteID).child("children").setValue(children);
+            mDatabase.child("sites").child(siteID).child("adult").setValue(adult);
+            mDatabase.child("sites").child(siteID).child("disability").setValue(disability);
+            mDatabase.child("sites").child(siteID).child("pets").setValue(pets);
+            mDatabase.child("sites").child(siteID).child("active").setValue(enabled);
         }
     }
 
@@ -224,5 +267,5 @@ public class SitePageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
 }
+
